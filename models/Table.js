@@ -115,7 +115,17 @@ var createTable_ = function() {
     },
 
     dataRange: function() {
-      return this.baseRange().getDataRegion();
+      var lastColumn = this.baseRange().getDataRegion(SpreadsheetApp.Dimension.COLUMNS).getLastColumn();
+      var ABCRange = indexToABC(1 + this.columnShift) + (1 + this.rowShift).toString() + ':';
+      ABCRange += indexToABC(lastColumn);
+
+      var values = this.sheet().getRange(ABCRange).getValues();
+      var lastFilledRow = 0;
+      for (lastFilledRow; lastFilledRow < values.length; lastFilledRow++) { // get last non-empty row
+        if (!values[lastFilledRow].join("")) break;
+      }
+
+      return this.sheet().getRange(ABCRange + (lastFilledRow + this.rowShift).toString());
     },
 
     rangeByRow: function(row_) {
